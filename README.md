@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/avitex/elixir-vultr.svg)](https://travis-ci.org/avitex/elixir-vultr)
-[![Inline docs](http://inch-ci.org/github/avitex/elixir-vultr.svg)](http://inch-ci.org/github/avitex/elixir-vultr)
+[![Hex.pm](https://img.shields.io/hexpm/v/vultr.svg)](https://hexdocs.pm/vultr)
+[![Hex Docs](https://img.shields.io/badge/hex-docs-blue.svg)](https://hexdocs.pm/vultr)
 
 # Vultr
 
