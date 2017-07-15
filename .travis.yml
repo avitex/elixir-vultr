@@ -1,0 +1,14 @@
+language: elixir
+elixir:
+  - 1.4.0
+notifications:
+  recipients:
+    - theavitex@gmail.com
+otp_release:
+  - 18.2
+env:
+  - MIX_ENV=test
+script:
+  - "mix do deps.get, compile"
+after_script:
+  - "MIX_ENV=docs mix do deps.get, inch.report"
