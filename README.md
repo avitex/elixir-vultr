@@ -17,7 +17,7 @@ Documentation hosted on [hexdocs](https://hexdocs.pm/vultr).
   ```
 
 ## Examples
-### Retrieving app list
+#### Retrieving app list
 
   ```elixir
   Vultr.app_list()
@@ -34,7 +34,7 @@ Documentation hosted on [hexdocs](https://hexdocs.pm/vultr).
   }
   ```
 
-### Using authenticated methods
+#### Using authenticated methods
 
   ```elixir
   client = Vultr.client("<APIKEY>")
