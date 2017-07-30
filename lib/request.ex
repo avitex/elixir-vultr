@@ -95,7 +95,7 @@ defmodule Vultr.Request do
 				end)
 
 			if is_special_param do
-				{String.upcase(k), v}
+				{k |> Atom.to_string |> String.upcase, v}
 			else
 				{k, v}
 			end
@@ -172,7 +172,7 @@ defmodule Vultr.Request do
 			raise ArgumentError, message: "Bad method"
 		end
 
-		method |> Atom.to_string |> String.upcase()
+		method |> Atom.to_string |> String.upcase
 	end
 
 	defp doc_api_key(nil), do: "No"
