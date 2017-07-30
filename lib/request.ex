@@ -1,6 +1,10 @@
 defmodule Vultr.Request do
+	@moduledoc false
 
-	#@SPECIAL_PARAMS ["SUBID", "DCID", "RECORDID", "VPSPLANID", "APPID", "OSID", "ISOID", "SCRIPTID", "SNAPSHOTID", "SSHKEYID", "BACKUPID", "USERID"]
+	@special_params [
+		:subid, :dcid, :recordid, :vpsplanid, :appid, :osid,
+		:isoid, :scriptid, :snapshotid, :sshkeyid, :backupid, :userid,
+	]
 
 	defmacro __using__(_) do
 		quote do
@@ -15,55 +19,88 @@ defmodule Vultr.Request do
 		endpoint_required_access = Keyword.get(endpoint_opts, :required_access, nil)
 		endpoint_has_params = (length(endpoint_params) > 0)
 
-		request_client_var = Macro.var(:client, nil)
-		request_params_var = Macro.var(:params, nil)
+		common_args = [__CALLER__.module, endpoint_method, endpoint_path]
 
-		function_args =
+		func = &__MODULE__.perform_request/5
+
+		func_name =
+			endpoint_path
+			|> String.replace("/", "_")
+			|> String.to_atom
+
+		func_doc = gen_doc(
+			endpoint_method, endpoint_path, 
+			endpoint_description, endpoint_params, 
+			endpoint_required_access, endpoint_requires_api_key
+		)
+
+		func_body =
 			cond do
 				endpoint_requires_api_key && endpoint_has_params ->
-					[request_client_var, request_params_var]
+					quote do
+						def unquote(func_name)(client, params \\ []) when is_list(params) do
+							unquote(func).(unquote_splicing(common_args), client, params)
+						end
+					end
 				endpoint_requires_api_key ->
-					[request_client_var]
+					quote do
+						def unquote(func_name)(client) do
+							unquote(func).(unquote_splicing(common_args), client, [])
+						end
+					end
 				endpoint_has_params ->
-					[request_params_var]
+					quote do
+						def unquote(func_name)(params \\ []) when is_list(params) do
+							unquote(func).(unquote_splicing(common_args), nil, params)
+						end
+					end
 				true ->
-					[]
-			end
-
-		tesla_args =
-			if endpoint_requires_api_key do
-				[request_client_var]
-			else
-				[]
-			end
-
-		tesla_args =
-			if endpoint_method === :get && endpoint_has_params do
-				tesla_args ++ [quote do
-					unquote(endpoint_path) <> "?" <> URI.encode_query(unquote(request_params_var))
-				end]
-			else
-				tesla_args ++ [quote do
-					unquote(endpoint_path)
-				end]
-			end
-		
-		tesla_args =
-			if endpoint_method !== :get && endpoint_has_params do
-				tesla_args ++ [request_params_var]
-			else
-				tesla_args
+					quote do
+						def unquote(func_name)() do
+							unquote(func).(unquote_splicing(common_args), nil, [])
+						end
+					end
 			end
 
 		quote do
-			@doc unquote(documentation(endpoint_method, endpoint_path, endpoint_description, endpoint_params, endpoint_required_access, endpoint_requires_api_key))
-			def unquote(function_name(endpoint_path))(unquote_splicing(function_args)) do
-				unquote(endpoint_method)(unquote_splicing(tesla_args))
-			end
+			@doc unquote(func_doc)
+			unquote(func_body)
 		end
 	end
 
-	defp function_name(path), do: path |> String.replace("/", "_") |> String.to_atom
+	def perform_request(caller, method, url, client, params) do
+		opts = [url: url, method: method] ++ prepare_params(method, params)
+		resp = Tesla.perform_request(caller, client, opts)
+		case resp.status do
+			200 -> {:ok, resp.body}
+			400 -> {:error, :invalid_api_location, resp.body}
+			403 -> {:error, :invalid_api_key, resp.body}
+			405 -> {:error, :invalid_http_method, resp.body}
+			412 -> {:error, :bad_request, resp.body}
+			500 -> {:error, :server_error, resp.body}
+			503 -> {:error, :rate_limit, resp.body}
+		end
+	end
+
+	defp prepare_params(:get, nil), do: [query: []]
+	defp prepare_params(_, nil), do: [body: %{}]
+	defp prepare_params(:get, params), do: [query: capitalize_special_params(params)]
+	defp prepare_params(_, params), do: [body: Enum.into(capitalize_special_params(params), %{})]
+
+	defp capitalize_special_params(params) do
+		Enum.map(params, fn {k, v} ->
+			is_special_param =
+				Enum.any?(@special_params, fn special_param ->
+					special_param == k
+				end)
+
+			if is_special_param do
+				{String.upcase(k), v}
+			else
+				{k, v}
+			end
+		end)
+	end
 
 	defp normalize_param({name, opts}) do
 		type = Keyword.fetch!(opts, :type)
@@ -84,7 +121,7 @@ defmodule Vultr.Request do
 	##################################################
 	# Documentation helpers
 
-	defp documentation(method, path, desc, params, required_access, api_key) do
+	defp gen_doc(method, path, desc, params, required_access, api_key) do
 		doc = """
 		#{desc}
 		"""
@@ -130,14 +167,6 @@ defmodule Vultr.Request do
 		end
 	end
 
-	defp doc_api_key(nil), do: "No"
-	defp doc_api_key(atm), do: atom_to_word(atm)
-
-	defp doc_required_access(nil), do: "None"
-	defp doc_required_access(atm), do: Atom.to_string(atm)
-	
-	defp atom_to_word(atm), do: atm |> Atom.to_string |> String.capitalize
-
 	defp doc_method(method) do
 		if !Enum.any?([:get, :post], fn supported -> method == supported end) do
 			raise ArgumentError, message: "Bad method"
@@ -145,4 +174,12 @@ defmodule Vultr.Request do
 
 		method |> Atom.to_string |> String.upcase()
 	end
+
+	defp doc_api_key(nil), do: "No"
+	defp doc_api_key(atm), do: atom_to_word(atm)
+
+	defp doc_required_access(nil), do: "None"
+	defp doc_required_access(atm), do: Atom.to_string(atm)
+
+	defp atom_to_word(atm), do: atm |> Atom.to_string |> String.capitalize
 end

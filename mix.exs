@@ -8,7 +8,7 @@ defmodule Vultr.Mixfile do
 	def project do
 		[
 			app: :vultr,
-			version: "0.1.0",
+			version: "0.2.0",
 			elixir: "~> 1.3",
 			deps: deps(),
 			description: @description,
@@ -25,7 +25,7 @@ defmodule Vultr.Mixfile do
 		[
 			{:inch_ex, "~> 0.5", only: :dev},
 			{:ex_doc, "~> 0.14", only: :dev, runtime: false},
-			{:tesla, "~> 0.7.0"},
+			{:tesla, "~> 0.7.1"},
 			{:ibrowse, "~> 4.2"},
 			{:poison, ">= 1.0.0"}
 		]

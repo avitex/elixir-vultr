@@ -8,6 +8,9 @@ defmodule Vultr do
 
 	adapter :ibrowse
 
+	@doc """
+	Create a Vultr client with an API-Key for authenticated methods
+	"""
 	def client(api_key) do
 		Tesla.build_client [
 			{Tesla.Middleware.Headers, %{ "API-Key" => api_key }}
