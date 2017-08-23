@@ -8,7 +8,7 @@ defmodule Vultr.Mixfile do
 	def project, do: [
 		app: :vultr,
 		version: "0.2.2",
-		elixir: "~> 1.3",
+		elixir: "~> 1.5",
 		deps: deps(),
 		description: @description,
 		package: package(),
