@@ -13,7 +13,7 @@ Documentation hosted on [hexdocs](https://hexdocs.pm/vultr).
 
   ```elixir
   def deps do
-    [{:vultr, "~> 0.2.2"}]
+    [{:vultr, "~> 0.2.3"}]
   end
   ```
 
