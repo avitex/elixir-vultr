@@ -151,54 +151,40 @@ defmodule Vultr.Request do
 	# Documentation helpers
 
 	defp gen_doc(method, path, desc, params, required_access, api_key) do
+		summary_table = doc_table([
+			["Method", "Path", "API Key", "Required Access"],
+			["------", "----", "-------", "---------------"],
+			[doc_method(method), path, doc_api_key(api_key), doc_required_access(required_access)],
+		])
+
+		params_rows = Enum.map(params, &[
+			"`#{String.downcase(&1.name)}`",
+			&1.type_string,
+			doc_optional_default(&1.optional, &1.default),
+			String.replace(&1.desc, "\n", "<br>"),
+		])
+
+		params_table = doc_table([
+			["Name", "Type", "Optional", "Description"],
+			["----", "----", "--------", "-----------"],
+		] ++ params_rows)
+
 		"""
 		#{desc}
-		#{doc_params(params)}
-		### Backend
-		- Method:           `#{doc_method(method)}`
-		- Path:             `#{path}`
-		- API Key:          `#{doc_api_key(api_key)}`
-		- Required Access:  `#{doc_required_access(required_access)}`
+		#{summary_table}
+		#### Params
+		#{params_table}
 		"""
-	end
-
-	defp doc_params([]), do: ""
-	defp doc_params(params) do
-		param_rows =
-			params
-			|> Enum.map(&doc_param/1)
-			|> Enum.join("")
-
-		"""
-		### Params
-		| Name | Type | Optional | Description |
-		| ---- | ---- | -------- | ----------- |
-		#{param_rows}
-		"""
-	end
-
-	defp doc_param(param) do
-		columns = [
-			"`#{String.downcase(param.name)}`",
-			param.type_string,
-			doc_optional_default(param.optional, param.default),
-			String.replace(param.desc, "\n", "<br>"),
-		]
-
-		"| #{Enum.join(columns, " | ")} |"
 	end
 
 	defp doc_optional_default(optional, default) do
-		if optional do
-			optional = "Yes"
-			
-			if default == nil do
-				optional
-			else
-				optional <> "<br>(Default `#{inspect default}`)"
-			end
-		else
-			"No"
+		cond do
+			optional && is_nil(default) ->
+				"Yes"
+			optional ->
+				"<br>(Default `#{inspect default}`)"
+			true ->
+				"No"
 		end
 	end
 
@@ -209,6 +195,10 @@ defmodule Vultr.Request do
 
 	defp doc_required_access(nil), do: "None"
 	defp doc_required_access(atm), do: Atom.to_string(atm)
+
+	defp doc_table(rows), do: Enum.map(rows, &doc_table_columns/1) |> Enum.join
+	
+	defp doc_table_columns(columns), do: "| #{Enum.join(columns, " | ")} |\n"
 
 	defp atom_to_word(atm), do: atm |> Atom.to_string |> String.capitalize
 end
