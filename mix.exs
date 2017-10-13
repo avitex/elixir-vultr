@@ -16,14 +16,13 @@ defmodule Vultr.Mixfile do
 
 	# Configuration for the OTP application
 	def application, do: [
-		applications: [:tesla, :ibrowse],
+		applications: [:httpotion],
 	]
 
 	defp deps, do: [
 		{:inch_ex, "~> 0.5", only: :docs},
 		{:ex_doc, "~> 0.16", only: :dev, runtime: false},
-		{:tesla, "~> 0.7.2"},
-		{:ibrowse, "~> 4.2"},
+		{:httpotion, "~> 3.0.2"},
 		{:poison, "~> 3.1"},
 	]
 

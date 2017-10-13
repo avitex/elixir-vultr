@@ -1,26 +1,12 @@
 defmodule Vultr do
-	use Tesla, docs: false
-	use Vultr.Request
-
-	plug Tesla.Middleware.BaseUrl, "https://api.vultr.com/v1"
-	plug Tesla.Middleware.FormUrlencoded
-	plug Tesla.Middleware.DecodeJson
-
-	adapter :ibrowse
-
-	@doc """
-	Create a Vultr client with an API-Key for authenticated methods
-	"""
-	def client(api_key) do
-		Tesla.build_client [
-			{Tesla.Middleware.Headers, %{ "API-Key" => api_key }}
-		]
-	end
+	use Vultr.Request, [
+		base_url: "https://api.vultr.com/",
+	]
 
 	##################################################
 	# Account
 
-	request :get, "account/info", [
+	request :get, "v1", "account/info", [
 		desc: """
 		Retrieve information about the current account.
 		""",
@@ -31,7 +17,7 @@ defmodule Vultr do
 	##################################################
 	# Application
 
-	request :get, "app/list", [
+	request :get, "v1", "app/list", [
 		desc: """
 		Retrieve a list of available applications.
 
@@ -42,7 +28,7 @@ defmodule Vultr do
 	##################################################
 	# API Key
 
-	request :get, "auth/info", [
+	request :get, "v1", "auth/info", [
 		desc: """
 		Retrieve information about the current API key.
 		""",
@@ -52,7 +38,7 @@ defmodule Vultr do
 	##################################################
 	# Backup
 
-	request :get, "backup/list", [
+	request :get, "v1", "backup/list", [
 		desc: """
 		List all backups on the current account.
 		""",
@@ -73,7 +59,7 @@ defmodule Vultr do
 	##################################################
 	# Block Storage
 
-	request :post, "block/attach", [
+	request :post, "v1", "block/attach", [
 		desc: """
 		Attach a block storage subscription to a VPS subscription.
 
@@ -97,7 +83,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "block/create", [
+	request :post, "v1", "block/create", [
 		desc: """
 		Create a block storage subscription.
 		""",
@@ -127,7 +113,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "block/delete", [
+	request :post, "v1", "block/delete", [
 		desc: """
 		Delete a block storage subscription.
 
@@ -146,7 +132,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "block/detach", [
+	request :post, "v1", "block/detach", [
 		desc: """
 		Detach a block storage subscription from the currently attached instance.
 		""",
@@ -162,7 +148,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "block/label_set", [
+	request :post, "v1", "block/label_set", [
 		desc: """
 		Set the label of a block storage subscription.
 		""",
@@ -184,7 +170,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :get, "block/list", [
+	request :get, "v1", "block/list", [
 		desc: """
 		Retrieve a list of any active block storage subscriptions on this account.
 		""",
@@ -202,7 +188,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "block/resize", [
+	request :post, "v1", "block/resize", [
 		desc: """
 		Resize the block storage volume to a new size.
 
@@ -229,7 +215,7 @@ defmodule Vultr do
 	##################################################
 	# DNS
 
-	request :post, "dns/create_domain", [
+	request :post, "v1", "dns/create_domain", [
 		desc: """
 		Create a domain name in DNS.
 		""",
@@ -251,7 +237,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "dns/create_record", [
+	request :post, "v1", "dns/create_record", [
 		desc: """
 		Add a DNS record.
 		""",
@@ -298,7 +284,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "dns/delete_domain", [
+	request :post, "v1", "dns/delete_domain", [
 		desc: """
 		Delete a domain name and all associated records.
 		""",
@@ -314,7 +300,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "dns/delete_record", [
+	request :post, "v1", "dns/delete_record", [
 		desc: """
 		Delete an individual DNS record.
 		""",
@@ -337,7 +323,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :get, "dns/list", [
+	request :get, "v1", "dns/list", [
 		desc: """
 		List all domains associated with the current account.
 		""",
@@ -345,7 +331,7 @@ defmodule Vultr do
 		required_access: :dns,
 	]
 
-	request :get, "dns/records", [
+	request :get, "v1", "dns/records", [
 		desc: """
 		List all the records associated with a particular domain.
 		""",
@@ -361,7 +347,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "dns/update_record", [
+	request :post, "v1", "dns/update_record", [
 		desc: """
 		Update a DNS record.
 		""",
@@ -415,7 +401,7 @@ defmodule Vultr do
 	##################################################
 	# ISO Image
 
-	request :get, "iso/list", [
+	request :get, "v1", "iso/list", [
 		desc: """
 		List all ISOs currently available on this account.
 		""",
@@ -426,7 +412,7 @@ defmodule Vultr do
 	##################################################
 	# Operating System
 
-	request :get, "os/list", [
+	request :get, "v1", "os/list", [
 		desc: """
 		Retrieve a list of available operating systems.
 
@@ -437,7 +423,7 @@ defmodule Vultr do
 	##################################################
 	# Plans
 
-	request :get, "plans/list", [
+	request :get, "v1", "plans/list", [
 		desc: """
 		Retrieve a list of all active plans. Plans that are no longer available will not be shown.
 		
@@ -460,7 +446,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :get, "plans/list_vc2", [
+	request :get, "v1", "plans/list_vc2", [
 		desc: """
 		Retrieve a list of all active vc2 plans. Plans that are no longer available will not be shown.
 		
@@ -470,7 +456,7 @@ defmodule Vultr do
 		""",
 	]
 
-	request :get, "plans/list_vdc2", [
+	request :get, "v1", "plans/list_vdc2", [
 		desc: """
 		Retrieve a list of all active vdc2 plans. Plans that are no longer available will not be shown.
 		
@@ -483,7 +469,7 @@ defmodule Vultr do
 	##################################################
 	# Regions
 
-	request :get, "regions/availability", [
+	request :get, "v1", "regions/availability", [
 		desc: """
 		Retrieve a list of the `VPSPLANID`s currently available in this location.
 		
@@ -501,7 +487,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :get, "regions/list", [
+	request :get, "v1", "regions/list", [
 		desc: """
 		Retrieve a list of all active regions.
 
@@ -512,7 +498,7 @@ defmodule Vultr do
 	##################################################
 	# Reserved IP
 
-	request :post, "reservedip/attach", [
+	request :post, "v1", "reservedip/attach", [
 		desc: """
 		Attach a reserved IP to an existing subscription.
 		""",
@@ -534,7 +520,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "reservedip/convert", [
+	request :post, "v1", "reservedip/convert", [
 		desc: """
 		Convert an existing IP on a subscription to a reserved IP.
 
@@ -565,7 +551,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "reservedip/create", [
+	request :post, "v1", "reservedip/create", [
 		desc: """
 		Create a new reserved IP.
 
@@ -598,7 +584,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "reservedip/destroy", [
+	request :post, "v1", "reservedip/destroy", [
 		desc: """
 		Remove a reserved IP from your account.
 
@@ -616,7 +602,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "reservedip/detach", [
+	request :post, "v1", "reservedip/detach", [
 		desc: """
 		Detach a reserved IP from an existing subscription.
 		""",
@@ -638,7 +624,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :get, "reservedip/list", [
+	request :get, "v1", "reservedip/list", [
 		desc: """
 		List all the active reserved IPs on this account.
 
@@ -652,7 +638,7 @@ defmodule Vultr do
 	##################################################
 	# Server
 
-	request :post, "server/app_change", [
+	request :post, "v1", "server/app_change", [
 		desc: """
 		Changes the virtual machine to a different application.
 
@@ -678,7 +664,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :get, "server/app_change_list", [
+	request :get, "v1", "server/app_change_list", [
 		desc: """
 		Retrieves a list of applications to which a virtual machine can be changed.
 
@@ -697,7 +683,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "server/backup_disable", [
+	request :post, "v1", "server/backup_disable", [
 		desc: """
 		Disables automatic backups on a server.
 
@@ -716,7 +702,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "server/backup_enable", [
+	request :post, "v1", "server/backup_enable", [
 		desc: """
 		Enables automatic backups on a server.
 		""",
@@ -733,7 +719,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "server/backup_get_schedule", [
+	request :post, "v1", "server/backup_get_schedule", [
 		desc: """
 		Retrieves the backup schedule for a server.
 
@@ -752,7 +738,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "server/backup_set_schedule", [
+	request :post, "v1", "server/backup_set_schedule", [
 		desc: """
 		Sets the backup schedule for a server.
 
@@ -802,7 +788,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :get, "server/bandwidth", [
+	request :get, "v1", "server/bandwidth", [
 		desc: """
 		Get the bandwidth used by a virtual machine.
 		""",
@@ -819,7 +805,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "server/create", [
+	request :post, "v1", "server/create", [
 		desc: """
 		Create a new virtual machine.
 
@@ -973,7 +959,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "server/create_ipv4", [
+	request :post, "v1", "server/create_ipv4", [
 		desc: """
 		Add a new IPv4 address to a server.
 
@@ -1002,7 +988,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "server/destroy", [
+	request :post, "v1", "server/destroy", [
 		desc: """
 		Destroy (delete) a virtual machine.
 
@@ -1022,7 +1008,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "server/destroy_ipv4", [
+	request :post, "v1", "server/destroy_ipv4", [
 		desc: """
 		Removes a secondary IPv4 address from a server.
 
@@ -1042,7 +1028,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :get, "server/get_app_info", [
+	request :get, "v1", "server/get_app_info", [
 		desc: """
 		Retrieves the application information for this subscription.
 		""",
@@ -1059,7 +1045,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :get, "server/get_user_data", [
+	request :get, "v1", "server/get_user_data", [
 		desc: """
 		Retrieves the (base64 encoded) user-data for this subscription.
 		""",
@@ -1076,7 +1062,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "server/halt", [
+	request :post, "v1", "server/halt", [
 		desc: """
 		Halt a virtual machine. This is a hard power off (basically, unplugging the machine).
 
@@ -1096,7 +1082,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "server/iso_attach", [
+	request :post, "v1", "server/iso_attach", [
 		desc: """
 		Attach an ISO and reboot the server.
 		""",
@@ -1120,7 +1106,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "server/iso_detach", [
+	request :post, "v1", "server/iso_detach", [
 		desc: """
 		Detach the currently mounted ISO and reboot the server.
 		""",
@@ -1137,7 +1123,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :get, "server/iso_status", [
+	request :get, "v1", "server/iso_status", [
 		desc: """
 		Retrieve the current ISO state for a given subscription.
 
@@ -1157,7 +1143,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "server/label_set", [
+	request :post, "v1", "server/label_set", [
 		desc: """
 		Set the label of a virtual machine.
 		""",
@@ -1180,7 +1166,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :get, "server/list", [
+	request :get, "v1", "server/list", [
 		desc: """
 		List all active or pending virtual machines on the current account.
 		
@@ -1232,7 +1218,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :get, "server/list_ipv4", [
+	request :get, "v1", "server/list_ipv4", [
 		desc: """
 		List the IPv4 information of a virtual machine.
 
@@ -1242,7 +1228,7 @@ defmodule Vultr do
 		required_access: :subscriptions,
 	]
 
-	request :get, "server/list_ipv6", [
+	request :get, "v1", "server/list_ipv6", [
 		desc: """
 		List the IPv6 information of a virtual machine.
 
@@ -1253,7 +1239,7 @@ defmodule Vultr do
 		required_access: :subscriptions,
 	]
 
-	request :get, "server/neighbors", [
+	request :get, "v1", "server/neighbors", [
 		desc: """
 		Determine what other subscriptions are hosted on the same physical host as a given subscription.
 		""",
@@ -1270,7 +1256,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "server/os_change", [
+	request :post, "v1", "server/os_change", [
 		desc: """
 		Changes the virtual machine to a different operating system.
 
@@ -1296,7 +1282,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :get, "server/os_change_list", [
+	request :get, "v1", "server/os_change_list", [
 		desc: """
 		Retrieves a list of operating systems to which a virtual machine can be changed.
 
@@ -1316,7 +1302,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "server/reboot", [
+	request :post, "v1", "server/reboot", [
 		desc: """
 		Reboot a virtual machine.
 
@@ -1335,7 +1321,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "server/reinstall", [
+	request :post, "v1", "server/reinstall", [
 		desc: """
 		Reinstall the operating system on a virtual machine.
 
@@ -1362,7 +1348,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "server/restore_backup", [
+	request :post, "v1", "server/restore_backup", [
 		desc: """
 		Restore the specified backup to the virtual machine.
 
@@ -1388,7 +1374,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "server/restore_snapshot", [
+	request :post, "v1", "server/restore_snapshot", [
 		desc: """
 		Restore the specified snapshot to the virtual machine.
 
@@ -1414,7 +1400,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "server/reverse_default_ipv4", [
+	request :post, "v1", "server/reverse_default_ipv4", [
 		desc: """
 		Set a reverse DNS entry for an IPv4 address of a virtual machine to the original setting.
 
@@ -1440,7 +1426,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "server/reverse_delete_ipv6", [
+	request :post, "v1", "server/reverse_delete_ipv6", [
 		desc: """
 		Remove a reverse DNS entry for an IPv6 address of a virtual machine.
 
@@ -1466,7 +1452,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :get, "server/reverse_list_ipv6", [
+	request :get, "v1", "server/reverse_list_ipv6", [
 		desc: """
 		List the IPv6 reverse DNS entries of a virtual machine.
 
@@ -1486,7 +1472,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "server/reverse_set_ipv4", [
+	request :post, "v1", "server/reverse_set_ipv4", [
 		desc: """
 		Set a reverse DNS entry for an IPv4 address of a virtual machine.
 
@@ -1518,7 +1504,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "server/reverse_set_ipv6", [
+	request :post, "v1", "server/reverse_set_ipv6", [
 		desc: """
 		Set a reverse DNS entry for an IPv6 address of a virtual machine.
 
@@ -1550,7 +1536,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "server/set_user_data", [
+	request :post, "v1", "server/set_user_data", [
 		desc: """
 		Sets the cloud-init user-data for this subscription.
 
@@ -1575,7 +1561,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "server/start", [
+	request :post, "v1", "server/start", [
 		desc: """
 		Start a virtual machine.
 
@@ -1594,7 +1580,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "server/upgrade_plan", [
+	request :post, "v1", "server/upgrade_plan", [
 		desc: """
 		Upgrade the plan of a virtual machine.
 
@@ -1620,7 +1606,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "server/upgrade_plan_list", [
+	request :post, "v1", "server/upgrade_plan_list", [
 		desc: """
 		Retrieve a list of the VPSPLANIDs for which a virtual machine can be upgraded.
 
@@ -1642,7 +1628,7 @@ defmodule Vultr do
 	##################################################
 	# Snapshot
 
-	request :post, "snapshot/create", [
+	request :post, "v1", "snapshot/create", [
 		desc: """
 		Create a snapshot from an existing virtual machine.
 
@@ -1668,7 +1654,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "snapshot/destroy", [
+	request :post, "v1", "snapshot/destroy", [
 		desc: """
 		Destroy (delete) a snapshot.
 
@@ -1687,7 +1673,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :get, "snapshot/list", [
+	request :get, "v1", "snapshot/list", [
 		desc: """
 		List all snapshots on the current account.
 		""",
@@ -1698,7 +1684,7 @@ defmodule Vultr do
 	##################################################
 	# SSH Key
 
-	request :post, "sshkey/create", [
+	request :post, "v1", "sshkey/create", [
 		desc: """
 		Create a new SSH Key.
 		""",
@@ -1720,7 +1706,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "sshkey/destroy", [
+	request :post, "v1", "sshkey/destroy", [
 		desc: """
 		Remove a SSH key.
 
@@ -1739,7 +1725,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :get, "sshkey/list", [
+	request :get, "v1", "sshkey/list", [
 		desc: """
 		List all the SSH keys on the current account.
 		""",
@@ -1747,7 +1733,7 @@ defmodule Vultr do
 		required_access: :subscriptions,
 	]
 
-	request :post, "sshkey/update", [
+	request :post, "v1", "sshkey/update", [
 		desc: """
 		Update an existing SSH Key.
 
@@ -1784,7 +1770,7 @@ defmodule Vultr do
 	##################################################
 	# Startup Script
 
-	request :post, "startupscript/create", [
+	request :post, "v1", "startupscript/create", [
 		desc: """
 		Create a startup script.
 		""",
@@ -1814,7 +1800,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "startupscript/destroy", [
+	request :post, "v1", "startupscript/destroy", [
 		desc: """
 		Remove a startup script.
 		""",
@@ -1830,7 +1816,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :get, "startupscript/list", [
+	request :get, "v1", "startupscript/list", [
 		desc: """
 		List all startup scripts on the current account.
 		
@@ -1841,7 +1827,7 @@ defmodule Vultr do
 		required_access: :subscriptions,
 	]
 
-	request :post, "startupscript/update", [
+	request :post, "v1", "startupscript/update", [
 		desc: """
 		Update an existing startup script.
 		""",
@@ -1875,7 +1861,7 @@ defmodule Vultr do
 	##################################################
 	# User Management
 
-	request :post, "user/create", [
+	request :post, "v1", "user/create", [
 		desc: """
 		Create a new user.
 		""",
@@ -1916,7 +1902,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :post, "user/delete", [
+	request :post, "v1", "user/delete", [
 		desc: """
 		Delete a user.
 		""",
@@ -1932,7 +1918,7 @@ defmodule Vultr do
 		},
 	]
 
-	request :get, "user/list", [
+	request :get, "v1", "user/list", [
 		desc: """
 		Retrieve a list of any users associated with this account.
 		
@@ -1951,7 +1937,7 @@ defmodule Vultr do
 		required_access: :manage_users,
 	]
 
-	request :post, "user/update", [
+	request :post, "v1", "user/update", [
 		desc: """
 		Update the details for a user.
 		""",
