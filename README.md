@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/avitex/elixir-vultr.svg)](https://travis-ci.org/avitex/elixir-vultr)
+[![Build Status](https://travis-ci.com/avitex/elixir-vultr.svg?branch=master)](https://travis-ci.com/avitex/elixir-vultr)
 [![Hex.pm](https://img.shields.io/hexpm/v/vultr.svg)](https://hex.pm/packages/vultr)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-blue.svg)](https://hexdocs.pm/vultr)
 
