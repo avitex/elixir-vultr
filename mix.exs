@@ -23,7 +23,7 @@ defmodule Vultr.Mixfile do
 		{:inch_ex, "~> 2.0", only: :docs},
 		{:ex_doc, "~> 0.16", only: :dev, runtime: false},
 		{:httpotion, "~> 3.1.3"},
-		{:poison, "~> 3.1"},
+		{:poison, "~> 4.0"},
 	]
 
 	defp package, do: [
